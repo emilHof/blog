@@ -1,8 +1,9 @@
 {
-	posts: [
-		{
-			title: "some post",
-			path: "/test.md"
-		}
-	]
+   "posts":[
+      {
+         "label":"Road To Lockfree Tree",
+         "desc":"Some Desc",
+         "date":"Some Data"
+      }
+   ]
 }
