@@ -3,7 +3,9 @@
       {
          "label":"Road To Lockfree Tree",
          "desc":"Some Desc",
-         "date":"Some Data"
+         "date":"Some Data",
+         "tag": "Rust",
+         "path": "posts.json"
       }
    ]
 }
