@@ -1,0 +1,8 @@
+{
+	posts: [
+		{
+			title: "some post",
+			path: "/test.md"
+		}
+	]
+}
