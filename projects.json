@@ -18,7 +18,7 @@
 			"title": "Mesh Network Development",
 			"desc": "A mesh network contracted by Northrop Grumman",
 			"tags": ["C++", "Python", "Infrastructure"],
-			"img": "rsrcs/ng.png",
+			"img": "rsrcs/ng.jpg",
 			"link": "https://github.com/emilHof/ng-mesh-buoy"
 		}
 	]
