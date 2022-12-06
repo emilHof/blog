@@ -1,0 +1,25 @@
+{
+	"projects": [
+		{
+			"title": "Mini-Prop",
+			"desc": "A CLI tool for parsing and analyzing propositional statements.",
+			"tags": ["Rust", "CLI", "Mathematics"],
+			"img": "rsrcs/mprop.png",
+			"link": "https://crates.io/crates/mini-prop"
+		},
+		{
+			"title": "Oxidized Square",
+			"desc": "A Rust SDK for the Square API.",
+			"tags": ["Rust", "SDK", "FinTech"],
+			"img": "rsrcs/oxys.png",
+			"link": "https://github.com/emilHof/square-ox"
+		},
+		{
+			"title": "Mesh Network Development",
+			"desc": "A mesh network contracted by Northrop Grumman",
+			"tags": ["C++", "Python", "Infrastructure"],
+			"img": "rsrcs/ng.png",
+			"link": "https://github.com/emilHof/ng-mesh-buoy"
+		}
+	]
+}
