@@ -14,6 +14,11 @@ trait MyTrait<T> where T: Ord {
     fn to_other(&self) -> Ordering;
 }
 fn main() {
-    println!("General Kenobi!")
+	for i in (0..10) {
+		println!("General Kenobi!")
+	}
+	if !true {
+	    panic!()
+	}
 }
 ```
