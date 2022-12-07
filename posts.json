@@ -6,6 +6,13 @@
          "date":"06-12-2022",
          "label": "Rust",
          "path": "/article/lock_free_pq.md"
+      },
+	  {
+         "title":"Test",
+		 "desc":"This is a Test",
+         "date":"06-12-2022",
+         "label": "Rust",
+         "path": "./test.md"
       }
    ]
 }
