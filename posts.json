@@ -1,18 +1,11 @@
 {
    "posts":[
       {
-         "title":"Road To Lockfree Tree",
-         "desc":"Some Desc",
-         "date":"Some Data",
+         "title":"Road To Lockfree Heap",
+		 "desc":"The start of a journey to implementing a lockfree Binary Heap in Rust",
+         "date":"06-12-2022",
          "label": "Rust",
-         "path": "test.md"
-      },
-      {
-         "title":"How to Design a Lockfree Algorithm",
-         "desc":"The second part of the Road To Lockfree Tree series",
-         "date":"Dec. 2nd, 2022",
-         "label": "Rust",
-         "path": "other.md"
+         "path": "/article/lock_free_pq.md"
       }
    ]
 }
