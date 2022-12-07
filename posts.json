@@ -8,7 +8,7 @@
          "path": "test.md"
       },
       {
-         "title":"How to Design a Lockfree Algorith",
+         "title":"How to Design a Lockfree Algorithm",
          "desc":"The second part of the Road To Lockfree Tree series",
          "date":"Dec. 2nd, 2022",
          "label": "Rust",
