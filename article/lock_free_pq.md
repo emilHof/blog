@@ -1,6 +1,6 @@
-# Road to Lockfree Priority Queue
+# Road to Lock Free PQ
 
-### What is Lockfree
+### What does it mean to be "Lock Free"
 
 Among the different concurrency enabling paradigms, lockfree tries to be unique by offering a
 way to operate on shared memory without the need for locks. In scenarios where lots of CPUs
@@ -32,25 +32,32 @@ such as **Forward Pointers**, that make searching them more efficient.
 As my knowledge of Skip Lists is rather limited, glancing over one or two articles that is, I expect to take
 quite a lot of time to learn about this data structure.
 
+### Some Skip List Details
+
+- Each level should have half the Nodes of the next lower level.
+- This gives us a tree-like structure where the number of Nodes in a level is $2^{h-l}$, where $h$ is
+  height of the tree and $l$ is the level.
+- We want to maintain a somewhat _clean_ structure where nodes are roughly evenly distributed across a level.
+- To _insert_ a Node, we find the place to insert it, and start building a tower. To do so we flip a coin
+  with a $50/50$ probability distribution. We keep adding nodes to our tower until we get, say tails. Then we stop
+
 ### Initial Plan
 
 ```rust
-// How do we maintain the heap invariant?
-pub struct LFHeap<K, V> {
-    root: NonNull<HeapNode<K,V>>,
-	gc: Arc<ShareGC<K,V>>,
-    /* some data */
+pub struct SkipList {
+    head: ListNode<K, V>,  // Our head node
+	height: u8,  // The max height is < 64, so u8 should suffice
+	length: usize,  // Should be < usize::<MAX
 }
 
-// Drop is implemented so to automatically restore the heap invariant
-struct HeapNode<K,V> {
+struct ListNode<K, V> {
     key: K,
 	value: V,
-}
 
-// Stores
-struct ShareGC<B> where B: Busy {
-    queue: LFQueue<B>,
+	left: *mut ListNode,
+	right: *mut ListNode,
+	top: *mut ListNode,
+	bottom: *mut ListNode,
 }
 ```
 
