@@ -5,14 +5,7 @@
 		 "desc":"The start of a journey to implementing a lockfree Binary Heap in Rust",
          "date":"06-12-2022",
          "label": "Rust",
-         "path": "/article/lock_free_pq.md"
-      },
-	  {
-         "title":"Test",
-		 "desc":"This is a Test",
-         "date":"06-12-2022",
-         "label": "Rust",
-         "path": "./test.md"
+         "path": "/articles/skippy/intro_to_lock_free.md"
       }
    ]
 }
