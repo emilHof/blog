@@ -6,3 +6,7 @@
 4. Insertion
 5. Random
 6. Runtime and Speed
+
+# Resources
+
+1. [CMU SkipList PDF](https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/skiplists.pdf)
