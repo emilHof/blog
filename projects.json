@@ -4,7 +4,7 @@
 			"title": "Skippy",
 			"desc": "Collection of concurrent and lock free data structures, implemented on a skip list",
 			"tags": ["Lock-free", "Concurrency, Rust"],
-			"img": "https://media.istockphoto.com/id/1142302367/vector/cartoon-soda-can-icon-isolated-on-white-background.jpg?s=170667a&w=0&k=20&c=fujprSp9wEbPEnS1JT_96ee0fe7qf7_xBl1TmHiRrus=",
+			"img": "rsrcs/skippy.jpg",
 			"link": "https://github.com/emilHof/skippy"
 		},
 		{
