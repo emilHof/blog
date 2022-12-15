@@ -2,8 +2,8 @@
 	"projects": [
 		{
 			"title": "Skippy",
-			"desc": "Collection of concurrent and lock free data structures, implemented on a skip list",
-			"tags": ["Lock-free", "Concurrency, Rust"],
+			"desc": "Collection of concurrent and lock free data structures, implemented on a skip list.",
+			"tags": ["Lock-free", "Concurrency","Rust"],
 			"img": "rsrcs/skippy.jpg",
 			"link": "https://github.com/emilHof/skippy"
 		},
