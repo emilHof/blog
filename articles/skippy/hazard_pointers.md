@@ -119,13 +119,12 @@ like this:
 /// 3. `ptr` is valid as `&T` until `self` is dropped.
 /// 4. `f` must deallocate T, else memory will be leaked.
 impl<F> Domain<F> {
-pub unsafe fn retire_ptr_with<T, D>(&self, ptr: *mut T, d: D) -> usize
+pub unsafe fn retire_ptr_with<T, D>(&self, ptr: *mut T, deleter: unsafe fn(*mut dyn Reclaim)) -> usize
 where
 T: Send,
-D: fn(*mut T)
 {
 	let retired = Box::new(unsafe {
-		Retired::new(self, ptr, d)
+		Retired::new(self, ptr, deleter)
 	});
 
 	self.push_list(retired)
