@@ -70,3 +70,13 @@ where
 	}
 }
 ```
+
+When we call `remove` we first see if any `Node` with the given `key` exists in our `SkipList`.
+If we are not able to find one, we just return `None` as we are done. If we do find a `Node` we
+need to try and tag it with `removed`. If we are not able to succeed that means another thread
+has started to remove it before we have, so we just exit early with `None`. If we do succeed,
+then the next step is to read the `key` and `val` from our `Node` and get the height of its
+`levels`. We then keep trying to logically unlink our `Node` from our list, starting with the
+returned height every time we fail to fully unlink the `Node`. Once we are completely finished
+with unlinking we retire our `Node` pointer, and try to deallocate it, disregarding whether we
+succeed or fail. Then we decrement the length of our list and exit with the `key` and `val`.
