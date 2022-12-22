@@ -1,11 +1,11 @@
 {
    "posts":[
       {
-         "title":"Road To Lockfree Heap",
-		 "desc":"The start of a journey to implementing a lockfree Binary Heap in Rust",
-         "date":"06-12-2022",
-         "label": "Rust",
-         "path": "/articles/skippy/intro_to_lock_free.md"
+         "title":"Race Conditions Abound",
+		 "desc":"My attempts and tackling the many race conditions of a sync SkipList.",
+         "date":"22-12-2022",
+         "label": "Skippy",
+         "path": "/articles/skippy/race_conditions_abound.md"
       },
       {
          "title":"Hazard Pointers for Skippy",
@@ -13,6 +13,13 @@
          "date":"14-12-2022",
          "label": "Rust",
          "path": "/articles/skippy/hazard_pointers.md"
+      },
+      {
+         "title":"Road To Lockfree Heap",
+		 "desc":"The start of a journey to implementing a lockfree Binary Heap in Rust",
+         "date":"06-12-2022",
+         "label": "Rust",
+         "path": "/articles/skippy/intro_to_lock_free.md"
       }
    ]
 }
