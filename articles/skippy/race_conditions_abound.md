@@ -99,6 +99,47 @@ conditions only get worse once `remove`s are executed at the same time.
 
 As an example, we could be inserting a new `Node` at some value, which immediately gets tagged
 with `removed`. That means there could then be another `Node` of the same value inserted next
-to ours, as the first `Node` now technically no longer exists in the list. We are still trying
-to build the first `Node` though, so on later searches for the insertion point, we need to
-be careful that the previous `Node` we link to are updated correctly.
+to ours since the first `Node` now technically no longer exists in the list. We are still
+trying to build the first `Node` though, so on later searches for the insertion point, we need
+to be careful that the previous `Node`s we are linking to are updated correctly. One way to
+ensure this is by making search always return the first instance of a `Node` with a given key
+if we allow removed `Node`s to be returned. We encode this invariant in the following line of
+`find`:
+
+```rust
+if (*next).key < *key || ( (*next).key == *key && (*next).removed() && !allow_removed ) => {
+```
+
+After this check we move our current pointer to the next pointer, basically progressing
+forwards on the same level. We only do this if the next key is less then ours, or it is
+equal to the current key yet the next node is tagged as removed and we are not allowing returns
+of removed `Node`s. So if we are looking for only _lively_ `Node`s we will not stop until
+we either find an insertion point that is at a `Node` that has not been removed or at the end
+of all of our _removed_ `Node`s with the `prev[0]` being the last _removed_ `Node`.
+
+Here is another edge case. What if we are inserting a `Node`, and we are not done building all
+of the levels yet. What if we are moving up the levels and linking to a `Node` that is
+concurrently being deleted. That means we are setting `node.levels[i] = next` where next is
+being removed. What if we discovered the insertion point where some
+`prev_node.levels[i] = next`. What if we switch `prev_node.levels[i] = node` and set
+`node.levels[i] = next`. We need to make sure that `next`, which is being removed, does not
+think it has successfully unlinked itself, while in actuality `node.levels[i]` is now pointing
+at `next` and we could run into a _use-after-free_. To ensure this does not happen we cache
+`prev_node.levels[i]` during `find` and then make sure `prev_node.levels[i]` is still the
+same when we are doing the compare and exchange later.
+
+```rust
+let (prev, next) = previous_nodes[i];
+
+/*
+	Some more things here...
+*/
+
+if let Err(other) = prev.as_ref().levels[i].as_std().compare_exchange(
+	next,
+//  ^^^^------------- Ensure that next is still the same.
+	new_node,
+	Ordering::SeqCst,
+	Ordering::SeqCst,
+) {
+```
