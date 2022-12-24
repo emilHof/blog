@@ -199,4 +199,48 @@ head-->1-->4-->6-->10-->11-->13-->14;
                r
 ```
 
-Now we get to level 2 for `Node` `11`. Our `prev` array tells us that we have
+Now we get to level 2 for `Node` `11`. Our `prev` array tells us that we have `6` as the
+predecessor of `11` at this level. We see that `6` is removed which means we could potentially
+be linking to a dead node. To avoid this we stop building the `Node` here and re-do our search.
+From this search we get a `prev` array of:
+
+```rust
+[
+	(head, 14),
+	(4, 14),
+	(4, 13),
+	(10, 13),
+	(10, 13)
+]
+```
+
+When we now continue to build the next level we pick up at level 2. We check our `prev` at this
+level and find `4` to be our predecessor. We do a compare and exchange expecting the old value
+to be `13`. After it succeeds our list looks as follows:
+
+```rust
+head----------------------------->14;
+head------>4--------------------->14;
+head-->1-->4---------------->13-->14;
+head-->1-->4----------->11-->13-->14;
+head-->1-->4-->6-->10-->11-->13-->14;
+               r
+```
+
+As we are building the levels `6` has now been fully removed and another thread has begun to
+insert a `Node` with `key` `8` giving us:
+
+```rust
+head----------------------------->14;
+head------>4--------------------->14;
+head-->1-->4-->8------------>13-->14;
+head-->1-->4-->8------->11-->13-->14;
+head-->1-->4-->8-->10-->11-->13-->14;
+```
+
+When we now try to build the next level of `11` we try to do a compare and exchange on `4`
+expecting the old value to be `13`. Yet, `4` now points at `8` at level 3 and thus this fails.
+We must search again, to find what the new state is. While we search `11` gets tagged as being
+removed. Since we are now no longer technically part of the list, another thread inserts a new
+`11`. While the old `11` is being removed, the other thread will not be able to insert the new
+`11`, as
