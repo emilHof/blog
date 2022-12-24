@@ -154,10 +154,49 @@ It may be a good idea to start with insertions.
 
 Suppose we have a 4 `Node`s set up as follows:
 
+```rust
+head------------------------>14;
+head------>4---------------->14;
+head-->1-->4----------->13-->14;
+head-->1-->4-->6------->13-->14;
+head-->1-->4-->6-->10-->13-->14;
 ```
-head------------------->14;
-head------>4----------->14;
-head-->1-->4----------->14;
-head-->1-->4-->6------->14;
-head-->1-->4-->6-->10-->14;
+
+We want to insert a `Node` with a key of `11`. After a search for the insert position, our
+`prev` array should look as follows:
+
+```rust
+[
+	(head, 14),
+	(4, 14),
+	(4, 13),
+	(6, 13),
+	(10, 13)
+]
 ```
+
+Now just as we finish our search, `6` gets tagged for removal.
+
+```rust
+head------------------------>14;
+head------>4---------------->14;
+head-->1-->4----------->13-->14;
+head-->1-->4-->6------->13-->14;
+head-->1-->4-->6-->10-->13-->14;
+               r
+```
+
+We begin the insertion of `11` by attempting to link it between `10` and `13`.
+This succeeds as `10` and `11` are both not tagged for removal and `13` is greater than `11`.
+While we do this `6` has been unlinked at level 2 giving us
+
+```rust
+head----------------------------->14;
+head------>4--------------------->14;
+head-->1-->4---------------->13-->14;
+head-->1-->4---------------->13-->14;
+head-->1-->4-->6-->10-->11-->13-->14;
+               r
+```
+
+Now we get to level 2 for `Node` `11`. Our `prev` array tells us that we have
