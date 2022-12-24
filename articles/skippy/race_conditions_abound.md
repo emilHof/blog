@@ -143,3 +143,33 @@ if let Err(other) = prev.as_ref().levels[i].as_std().compare_exchange(
 	Ordering::SeqCst,
 ) {
 ```
+
+All that being said, there obviously needs to be a plan for how to insert and remove `Node`s
+as soundly as sound as possible. One of the best ways to do this would seem to be proving
+that operations will have deterministic outcomes, no matter the contention.
+
+### The Plan
+
+It may be a good idea to start with insertions.
+
+Suppose we have a 4 `Node`s set up as follows:
+
+```mermaid
+graph LR; head-->|//////////////////////////////////////////////////////|14;
+```
+
+```mermaid
+graph LR; head-->|/////////////|4-->|////////////////////////////|14;
+```
+
+```mermaid
+graph LR; head-->1-->4-->|////////////////////////////|14;
+```
+
+```mermaid
+graph LR; head-->1-->4-->6-->|///////////////|14;
+```
+
+```mermaid
+graph LR; head-->1-->4-->6-->10-->14;
+```
