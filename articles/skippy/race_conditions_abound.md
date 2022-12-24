@@ -154,22 +154,10 @@ It may be a good idea to start with insertions.
 
 Suppose we have a 4 `Node`s set up as follows:
 
-```mermaid
-graph LR; head-->|//////////////////////////////////////////////////////|14;
 ```
-
-```mermaid
-graph LR; head-->|/////////////|4-->|////////////////////////////|14;
-```
-
-```mermaid
-graph LR; head-->1-->4-->|////////////////////////////|14;
-```
-
-```mermaid
-graph LR; head-->1-->4-->6-->|///////////////|14;
-```
-
-```mermaid
-graph LR; head-->1-->4-->6-->10-->14;
+head------------------->14;
+head------>4----------->14;
+head-->1-->4----------->14;
+head-->1-->4-->6------->14;
+head-->1-->4-->6-->10-->14;
 ```
