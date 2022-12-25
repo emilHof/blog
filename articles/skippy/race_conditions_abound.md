@@ -148,6 +148,8 @@ All that being said, there obviously needs to be a plan for how to insert and re
 as soundly as sound as possible. One of the best ways to do this would seem to be proving
 that operations will have deterministic outcomes, no matter the contention.
 
+<br></br>
+
 ### The Plan
 
 It may be a good idea to start with insertions.
@@ -155,11 +157,11 @@ It may be a good idea to start with insertions.
 Suppose we have a 4 `Node`s set up as follows:
 
 ```rust
-head------------------------>14;
-head------>4---------------->14;
-head-->1-->4----------->13-->14;
-head-->1-->4-->6------->13-->14;
-head-->1-->4-->6-->10-->13-->14;
+[head]---------------------------------->[14];
+[head]-------->[4]---------------------->[14];
+[head]-->[1]-->[4]--------------->[13]-->[14];
+[head]-->[1]-->[4]-->[6]--------->[13]-->[14];
+[head]-->[1]-->[4]-->[6]-->[10]-->[13]-->[14];
 ```
 
 We want to insert a `Node` with a key of `11`. After a search for the insert position, our
@@ -178,12 +180,12 @@ We want to insert a `Node` with a key of `11`. After a search for the insert pos
 Now just as we finish our search, `6` gets tagged for removal.
 
 ```rust
-head------------------------>14;
-head------>4---------------->14;
-head-->1-->4----------->13-->14;
-head-->1-->4-->6------->13-->14;
-head-->1-->4-->6-->10-->13-->14;
-               r
+[head]---------------------------------->[14];
+[head]-------->[4]---------------------->[14];
+[head]-->[1]-->[4]--------------->[13]-->[14];
+[head]-->[1]-->[4]-->[6]--------->[13]-->[14];
+[head]-->[1]-->[4]-->[6]-->[10]-->[13]-->[14];
+                      r
 ```
 
 We begin the insertion of `11` by attempting to link it between `10` and `13`.
@@ -191,12 +193,12 @@ This succeeds as `10` and `11` are both not tagged for removal and `13` is great
 While we do this `6` has been unlinked at level 2 giving us
 
 ```rust
-head----------------------------->14;
-head------>4--------------------->14;
-head-->1-->4---------------->13-->14;
-head-->1-->4---------------->13-->14;
-head-->1-->4-->6-->10-->11-->13-->14;
-               r
+[head]----------------------------------------->[14];
+[head]-------->[4]----------------------------->[14];
+[head]-->[1]-->[4]---------------------->[13]-->[14];
+[head]-->[1]-->[4]---------------------->[13]-->[14];
+[head]-->[1]-->[4]-->[6]-->[10]-->[11]-->[13]-->[14];
+                      r
 ```
 
 Now we get to level 2 for `Node` `11`. Our `prev` array tells us that we have `6` as the
@@ -209,8 +211,8 @@ From this search we get a `prev` array of:
 	(head, 14),
 	(4, 14),
 	(4, 13),
-	(10, 13),
-	(10, 13)
+	(4, 13),
+	(10, 11)
 ]
 ```
 
@@ -219,28 +221,92 @@ level and find `4` to be our predecessor. We do a compare and exchange expecting
 to be `13`. After it succeeds our list looks as follows:
 
 ```rust
-head----------------------------->14;
-head------>4--------------------->14;
-head-->1-->4---------------->13-->14;
-head-->1-->4----------->11-->13-->14;
-head-->1-->4-->6-->10-->11-->13-->14;
-               r
+[head]----------------------------------------->[14];
+[head]-------->[4]----------------------------->[14];
+[head]-->[1]-->[4]---------------------->[13]-->[14];
+[head]-->[1]-->[4]--------------->[11]-->[13]-->[14];
+[head]-->[1]-->[4]-->[6]-->[10]-->[11]-->[13]-->[14];
+                      r
 ```
 
 As we are building the levels `6` has now been fully removed and another thread has begun to
 insert a `Node` with `key` `8` giving us:
 
 ```rust
-head----------------------------->14;
-head------>4--------------------->14;
-head-->1-->4-->8------------>13-->14;
-head-->1-->4-->8------->11-->13-->14;
-head-->1-->4-->8-->10-->11-->13-->14;
+[head]----------------------------------------->[14];
+[head]-------->[4]----------------------------->[14];
+[head]-->[1]-->[4]-->[8]---------------->[13]-->[14];
+[head]-->[1]-->[4]-->[8]--------->[11]-->[13]-->[14];
+[head]-->[1]-->[4]-->[8]-->[10]-->[11]-->[13]-->[14];
 ```
 
 When we now try to build the next level of `11` we try to do a compare and exchange on `4`
 expecting the old value to be `13`. Yet, `4` now points at `8` at level 3 and thus this fails.
 We must search again, to find what the new state is. While we search `11` gets tagged as being
 removed. Since we are now no longer technically part of the list, another thread inserts a new
-`11`. While the old `11` is being removed, the other thread will not be able to insert the new
-`11`, as
+`11`. The prev arrays of the search for the old, now _removed_ `11` and the new `11` both look
+like this:
+
+```rust
+[
+	(head, 14),
+	(4, 14),
+	(8, 13),
+	(8, 11),
+	(10, 11)
+]
+```
+
+The list looks as follows:
+
+```rust
+[head]----------------------------------------->[14];
+[head]-------->[4]----------------------------->[14];
+[head]-->[1]-->[4]-->[8]---------------->[13]-->[14];
+[head]-->[1]-->[4]-->[8]--------->[11]-->[13]-->[14];
+[head]-->[1]-->[4]-->[8]-->[10]-->[11]-->[13]-->[14];
+                                    r
+```
+
+Even though the old `11` is marked as removed, the thread will still try to finish building
+all the levels. This may end up being a flaw in the design, yet, that is still tbd for me. The
+thread that is inserting the new `11` also succeeds in its first insertion, since the
+propositions
+
+```rust
+if (!next.is_null() && (*next).key <= (*new_node).key && !(*new_node).removed())
+	|| prev.as_ref().removed()
+{
+	return Err(i)
+}
+```
+
+evaluates to `false` for both the old `11` as `next` and `10` as `prev`/predecessor. Both
+threads succeed at building their next levels.
+
+```rust
+[head]------------------------------------------------>[14];
+[head]-------->[4]------------------------------------>[14];
+[head]-->[1]-->[4]-->[8]---------------->[11]-->[13]-->[14];
+[head]-->[1]-->[4]-->[8]---------------->[11]-->[13]-->[14];
+[head]-->[1]-->[4]-->[8]-->[10]-->[11]-->[11]-->[13]-->[14];
+                                           r
+```
+
+It is important to note at this point, that the tread that is actively working on deleting `11`
+cannot succeed until `11` is completely finished. This is because of this check:
+
+```rust
+if let Err(_) = prev.as_ref().levels[i].as_std().compare_exchange(
+	node,
+	new_next,
+	Ordering::SeqCst,
+	Ordering::SeqCst,
+) {
+	return Err(i + 1);
+}
+```
+
+The deleting thread expects `prev.levels[i]` to point at `node` being deleted, which will not
+be true up to the top level until we completely finished building the `Node`. Since the old
+`11` is now at full height, this process will begin.
