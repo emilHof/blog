@@ -3,7 +3,7 @@
       {
          "title":"Race Conditions Abound",
 		 "desc":"My attempts and tackling the many race conditions of a sync SkipList.",
-         "date":"22-12-2022",
+         "date":"22-12-2022(26-12-2022)",
          "label": "Skippy",
          "path": "/articles/skippy/race_conditions_abound.md"
       },
