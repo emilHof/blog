@@ -5,7 +5,7 @@
 			"desc": "Idiomatic Programming for Experienced Developers.",
       "authors": ["Jon Gjengset"],
 			"tags": ["Rust", "Ergonomics", "Idioms"],
-			"img": "https://nostarch.com/sites/default/files/styles/uc_product/public/RustforRustaceans_cover.png?itok=uChLsQfM",
+			"img": "/rsrcs/RustforRustaceans_cover.png",
 			"link": "https://nostarch.com/rust-rustaceans"
 		}
 	]
