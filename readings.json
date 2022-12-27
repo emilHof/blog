@@ -7,6 +7,54 @@
 			"tags": ["Rust", "Ergonomics", "Idioms"],
 			"img": "rsrcs/RustforRustaceans_cover.png",
 			"link": "https://nostarch.com/rust-rustaceans"
-		}
+		},
+		{
+			"title": "Software Engineering - The Current Practice",
+			"desc": "Idiomatic Programming for Experienced Developers.",
+      "authors": ["Václav Rajlich"],
+			"tags": ["Software Engineering", "Development"],
+			"img": "rsrcs/soft_cur.jpg",
+			"link": "https://www.amazon.com/Software-Engineering-Practice-Innovations-Development/dp/1439841225"
+		},
+		{
+            "title": "The Rust Programming Language",
+			"desc": "The official book on the Rust programming language.",
+            "authors": ["Klabnik", "Steve", "Nichols", "Carol"],
+            "tags": ["Rust", "Fundamentals", "Memory Management"],
+            "img": "rsrcs/rust_prog.jpg",
+			"link": "https://doc.rust-lang.org/book/"
+        },
+		{
+            "title": "Algorithms Unlocked",
+			"desc": "The basic principles and applications of computer algorithms.",
+            "authors": ["Thomas H. Cormen"],
+            "tags": ["Algorithms", "DS", "Notation", "Basics"],
+            "img": "rsrcs/alg_unlocked.jpg",
+			"link": "https://en.wikipedia.org/wiki/Algorithms_Unlocked"
+        },
+		{
+            "title": "Programming in Go",
+			"desc": "Hands-On Guide to Go Concurrency, Multicore Hardware, and Programmer Convenience",
+            "authors": ["Mark Summerfield"],
+            "tags": ["Go", "Basics", "Convention"],
+            "img": "rsrcs/gobook.jpg",
+			"link": "https://www.amazon.com/Programming-Go-Creating-Applications-Developers/dp/0321774639"
+        },
+		{
+            "title": "Exploring Requirements",
+			"desc": "A set of principles illustrated by relevant and thought-provoking examples.",
+            "authors": ["Donald C. Gause", "Gerald Weinberg"],
+            "tags": ["Requirements", "Design Journey", "Quality"],
+            "img": "rsrcs/expl_req.jpg",
+			"link": "https://www.amazon.de/-/en/Donald-C-Gause/dp/0932633137"
+        },
+		{
+            "title": "Quality Code",
+			"desc": "Test-driven, test-first, and test-early development practices.",
+            "authors": ["Stephen Vance"],
+            "tags": ["TDD", "Test-First", "Craftsmanship"],
+            "img": "rsrcs/qual_code.jpg",
+			"link": "https://www.amazon.de/-/en/Stephen-Vance/dp/0321832981"
+        }
 	]
 }
