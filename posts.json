@@ -1,6 +1,13 @@
 {
    "posts":[
       {
+         "title":"The Racy Case",
+		 "desc":"How removal and unobserved unlinking can result in horribly undefined states.",
+         "date":"30-12-2022",
+         "label": "Skippy",
+         "path": "/articles/skippy/the_racey_case.md"
+      },
+      {
          "title":"Race Conditions Abound",
 		 "desc":"My attempts and tackling the many race conditions of a sync SkipList.",
          "date":"22-12-2022(26-12-2022)",
