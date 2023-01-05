@@ -76,3 +76,96 @@ A very similar issue also arises when linking a new `Node`.
 One way to avoid this would be to somehow encode the `removed` tag into our `AtomicPtr` in `prev`
 so would `Err(_)` at step `4.` due to `node` now being a different pointer. This could be
 done by using the lower, insignificant digits of our `AtomicPtr` as a place to store _tags_.
+
+In comes, `MaybeTagged`. The layout looks as follows:
+
+```rust
+pub(crate) struct MaybeTagged<T>(AtomicPtr<T>);
+```
+
+In essence, `MaybeTagged` stores `*mut T` in its inner `AtomicPtr<T>` which has potentially had
+bits set in its lower, insignificant bit range. Given a tag of `usize` and a pointer, it
+composes the two and stores the tagged `*mut` inside of the `AtomicPtr`.
+
+```rust
+pub(crate) fn store_composed(&self, ptr: *mut T, tag: usize) {
+	let tagged = Self::compose_raw(ptr, tag);
+
+	unsafe {
+		self.0
+			.as_std()
+			.store(tagged, std::sync::atomic::Ordering::Release);
+	}
+}
+
+#[inline]
+fn compose_raw(ptr: *mut T, tag: usize) -> *mut T {
+	usize_to_ptr_with_provenance(
+		(ptr as usize & !unused_bits::<T>()) | (tag & unused_bits::<T>()),
+		ptr,
+	)
+}
+```
+
+On loads, it ensures that a `*mut` is never returned with its lower bits still set, as to not
+cause SEGFAULTs and UB.
+
+```rust
+pub(crate) fn load_ptr(&self) -> *mut T {
+	self.load_decomposed().0
+}
+
+pub(crate) fn load_decomposed(&self) -> (*mut T, usize) {
+	let raw = unsafe { self.0.as_std().load(std::sync::atomic::Ordering::Acquire) };
+	Self::decompose_raw(raw)
+}
+
+#[inline]
+fn decompose_raw(raw: *mut T) -> (*mut T, usize) {
+	(
+		usize_to_ptr_with_provenance(raw as usize & !unused_bits::<T>(), raw),
+		raw as usize & unused_bits::<T>(),
+	)
+}
+```
+
+Now, with this `MaybeTagged` scheme in place, we can pass around our protected `*mut Node`s
+inside of a `NodeRef`, which holds the `*mut Node` along with the `HazardPointer` that ensures
+it's protection.
+
+```rust
+#[allow(dead_code)]
+struct NodeRef<'a, K, V> {
+    node: NonNull<Node<K, V>>,
+    _hazard: HazardPointer<'a>
+}
+
+impl<'a, K, V> NodeRef<'a, K, V> {
+    pub(crate) fn from_maybe_tagged(maybe_tagged: &MaybeTagged<Node<K, V>>) -> Option<Self> {
+        let mut _hazard = HazardPointer::new();
+        let mut ptr = maybe_tagged.load_ptr();
+
+        _hazard.protect_raw(ptr);
+
+        let mut v_ptr = maybe_tagged.load_ptr();
+
+        while !core::ptr::eq(ptr, v_ptr) {
+            ptr = v_ptr;
+            _hazard.protect_raw(ptr);
+
+            v_ptr = maybe_tagged.load_ptr();
+        }
+
+        if ptr.is_null() {
+            None
+        } else {
+            unsafe {
+                Some(NodeRef {
+                    node: core::ptr::NonNull::new_unchecked(ptr),
+                    _hazard,
+                })
+            }
+        }
+    }
+}
+```
