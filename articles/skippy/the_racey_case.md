@@ -77,7 +77,12 @@ One way to avoid this would be to somehow encode the `removed` tag into our `Ato
 so would `Err(_)` at step `4.` due to `node` now being a different pointer. This could be
 done by using the lower, insignificant digits of our `AtomicPtr` as a place to store _tags_.
 
-In comes, `MaybeTagged`. The layout looks as follows:
+### MaybeTagged
+
+By storing additional `tag` information in the lower bits of our `AtmoicPtr` any thread with outdated
+information would fail when `compare_exchange`ing the `untagged` pointer. Of course, messing with the
+bits of a pointer can cause horrible UB, so this requires some amount of care to implement. In comes,
+`MaybeTagged`:
 
 ```rust
 pub(crate) struct MaybeTagged<T>(AtomicPtr<T>);
